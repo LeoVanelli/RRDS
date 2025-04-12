@@ -55,4 +55,4 @@ Após seguir esses passos, o sistema estará pronto para processar os registros.
 
 ---
 
-Se tiver dúvidas ou precisar de mais informações, entre em contato com a equipe de suporte.
+Se tiver dúvidas ou precisar de mais informações, estarei a disposição.
