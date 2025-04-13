@@ -1,3 +1,5 @@
 patchright
 pandas
 openpyxl
+greenlet
+pyee

@@ -1,6 +1,8 @@
 import logging
 import random
 import time
+import os
+import sys
 from typing import List, Dict
 from patchright.sync_api import sync_playwright
 from config.settings import Settings
@@ -24,7 +26,22 @@ def run_scraper(settings: Settings) -> None:
     with sync_playwright() as p:
         browser = None
         try:
-            browser = p.chromium.launch(headless=False)
+            if getattr(sys, 'frozen', False):
+                base_path = sys._MEIPASS
+                chromium_path = os.path.join(base_path, "patchright", "browser", "chrome-win", "chrome.exe")
+            else:
+                chromium_path = r"C:\Users\%USERPROFILE%\AppData\Local\ms-playwright\chromium-1161\chrome-win\chrome.exe"
+
+            if not os.path.exists(chromium_path):
+                logging.error(f"Chromium não encontrado em: {chromium_path}")
+                raise FileNotFoundError(f"Chromium não encontrado em: {chromium_path}")
+
+            browser = p.chromium.launch(
+                headless=False,
+                executable_path=chromium_path
+            )
+            logging.info(f"Navegador iniciado com Chromium em: {chromium_path}")
+
             context = browser.new_context(
                 user_agent=settings.USER_AGENT,
                 viewport=settings.VIEWPORT
@@ -73,7 +90,9 @@ def run_scraper(settings: Settings) -> None:
             logging.info("Processamento concluído")
         except Exception as e:
             logging.error(f"Erro geral: {e}")
+            raise
         finally:
             save_to_excel(results, settings.OUTPUT_EXCEL)
             if browser:
                 browser.close()
+                logging.info("Navegador fechado com sucesso.")
