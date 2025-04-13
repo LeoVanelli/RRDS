@@ -1,5 +1,5 @@
 
-# Instruções para Configuração e Execução do Projeto
+# Registro Rural Data Scraper v1.2.1
 
 Este guia descreve os passos para configurar e executar o projeto corretamente.
 
