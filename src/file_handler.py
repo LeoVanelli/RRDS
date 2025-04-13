@@ -1,5 +1,6 @@
 import csv
 import logging
+import re
 import pandas as pd
 import os
 from typing import List, Dict
@@ -33,8 +34,22 @@ def read_registros_csv(filename: str) -> List[str]:
 
 def save_to_excel(data: List[Dict], filename: str) -> None:
     try:
+        output_dir = os.path.dirname(filename)
+        base_name = "resultado_registros_incra_batch_"
+        extension = ".xlsx"
+
+        max_number = 0
+        if os.path.exists(output_dir):
+            for existing_file in os.listdir(output_dir):
+                match = re.match(rf"{base_name}(\d+){extension}", existing_file)
+                if match:
+                    number = int(match.group(1))
+                    max_number = max(max_number, number)
+
+        new_filename = os.path.join(output_dir, f"{base_name}{max_number + 1}{extension}")
+
         df = pd.DataFrame(data, columns=['cod_imovel', 'nomeImovel', 'nomeProprietario'])
-        df.to_excel(filename, index=False)
-        logging.info(f"Resultados salvos em {filename}")
+        df.to_excel(new_filename, index=False)
+        logging.info(f"Resultados salvos em {new_filename}")
     except Exception as e:
         logging.error(f"Erro ao salvar Excel: {e}")
